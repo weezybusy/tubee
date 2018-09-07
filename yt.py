@@ -2,14 +2,20 @@
 # coding: utf-8
 
 
+# TODO:
+#       1. Get path
+#       2. Write tests
+
+
 from __future__ import unicode_literals
-import youtube_dl
+from pathlib import Path
 import argparse
+import youtube_dl
 
 
 def error(msg):
-    print('ERROR: {}'.format(msg))
-    exit(2)
+    print('ERROR: {}.'.format(msg))
+    exit(1)
 
 
 def get_parser():
@@ -18,10 +24,10 @@ def get_parser():
             formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=80)
     )
     parser.add_argument(
-            '-d', '--directory',
-            dest='directory',
-            metavar='DIRECTORY',
-            help='save directory'
+            '-p', '--path',
+            dest='path',
+            metavar='PATH',
+            help='save to path'
     )
     parser.add_argument(
             '-l', '--link',
@@ -36,7 +42,7 @@ def get_parser():
             help='type of content to download'
     )
     parser.add_argument(
-            '-p', '--playlist',
+            '--playlist',
             dest='playlist',
             action='store_true',
             help='download playlist'
@@ -53,14 +59,9 @@ def get_parser():
 def main():
     parser = get_parser()
     args = parser.parse_args()
-    ydl_opts = {
-            'outtmpl': '%(title)s.%(ext)s',
-            'noplaylist': True
-    }
-    # TODO:
-    #       1. Get path
-    #       2. Write tests
-    path = ''
+    file_name = '%(title)s.%(ext)s'
+    dir_name = Path('.')
+    ydl_opts = { 'noplaylist': True }
 
     if not args.link:
         error('Expected link')
@@ -78,16 +79,23 @@ def main():
                 if args.resolution in [ '720', '1080' ]:
                     ydl_opts['format'] = 'bestvideo[height<={0}]+bestaudio/best[height<={0}]'.format(args.resolution)
                 else:
-                    error('ERROR: invalid resolution.')
+                    error('ERROR: invalid resolution')
         else:
-            error('ERROR: invalid type.')
+            error('ERROR: invalid type')
 
     if args.playlist:
         ydl_opts['noplaylist'] = False
-        ydl_opts['outtmpl'] = '%(playlist_index)s-%(title)s.%(ext)s'
+        file_name = '%(playlist_index)s-%(title)s.%(ext)s'
+
+    if args.path:
+        dir_name = Path(args.path)
+        if not (dir_name.exists() and dir_name.is_dir()):
+            error('\'{}\' is invalid path'.format(dir_name))
+    path = dir_name / file_name
+    ydl_opts['outtmpl'] = str(path)
 
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([args.link])
+            ydl.download([args.link])
 
 
 if __name__ == "__main__":
