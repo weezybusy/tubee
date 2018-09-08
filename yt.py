@@ -2,11 +2,6 @@
 # coding: utf-8
 
 
-# TODO:
-#       1. Get path
-#       2. Write tests
-
-
 from __future__ import unicode_literals
 from pathlib import Path
 import argparse
@@ -24,16 +19,17 @@ def get_parser():
             formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=80)
     )
     parser.add_argument(
-            '-p', '--path',
-            dest='path',
-            metavar='PATH',
-            help='save to path'
-    )
-    parser.add_argument(
             '-l', '--link',
             dest='link',
             metavar='LINK',
-            help='link to content'
+            help='link to content',
+            required=True
+    )
+    parser.add_argument(
+            '-p', '--path',
+            dest='path',
+            metavar='PATH',
+            help='save path',
     )
     parser.add_argument(
             '-t', '--type',
@@ -61,10 +57,8 @@ def main():
     args = parser.parse_args()
     file_name = '%(title)s.%(ext)s'
     dir_name = Path('.')
+    link = args.link
     ydl_opts = { 'noplaylist': True }
-
-    if not args.link:
-        error('Expected link')
 
     if args.type:
         if args.type == 'audio':
@@ -91,7 +85,7 @@ def main():
         dir_name = Path(args.path)
         if not (dir_name.exists() and dir_name.is_dir()):
             error('\'{}\' is invalid path'.format(dir_name))
-    path = dir_name / file_name
+    path = (dir_name / file_name).resolve()
     ydl_opts['outtmpl'] = str(path)
 
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
