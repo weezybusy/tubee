@@ -10,14 +10,76 @@ import tkinter as tk
 
 class Application(tk.Frame):
 
-    def init(self, master=None):
-        super().__init__(matser)
+    def __init__(self, master=None):
+        super().__init__(master)
         self.pack()
         self.create_widgets()
         self.master.title('YT')
 
     def create_widgets(self):
-        pass
+
+        # Entry for a link.
+        self.link_var = tk.StringVar()
+        self.link_entry = tk.Entry(
+                self,
+                bd=1,
+                textvariable=self.link_var
+        )
+        self.link_entry.insert(0, "Put your link here ...")
+        self.link_entry.bind('<FocusIn>', self.on_entry_click)
+        self.link_entry.bind('<FocusOut>', self.on_entry_focusout)
+        self.link_entry.config(fg='grey')
+        self.link_entry.pack()
+
+        # Radio buttons for type.
+        #self.type_var = tk.IntVar()
+        #self.audio_radiobutton = tk.Radiobutton(
+        #        self,
+        #        text="Video",
+        #        variable=self.type_var,
+        #        value=1,
+        #        command=self.get_type
+        #)
+        #self.audio_radiobutton.pack()
+        #self.video_radiobutton = tk.Radiobutton(
+        #        self,
+        #        text="Audio",
+        #        variable=self.type_var,
+        #        value=2,
+        #        command=self.get_type
+        #)
+        #self.video_radiobutton.pack()
+
+        # Menu button for resolution.
+
+        # Check button for playlist.
+
+        # Get destination path.
+
+        # Message box
+
+        # Button to start downloading.
+
+    #def get_link(self):
+    #    print(self.link_var.get())
+
+    #def get_type(self):
+    #    if self.type.get() == 1:
+    #        print("Type: audio")
+    #    elif self.type_var.get() == 2:
+    #        print("Type: video")
+
+    def on_entry_click(self, event):
+        """function that gets called whenever entry is clicked"""
+        if self.link_entry.get() == 'Put your link here ...':
+           self.link_entry.delete(0, "end") # delete all the text in the entry
+           self.link_entry.insert(0, '')    #Insert blank for user input
+           self.link_entry.config(fg='black')
+
+    def on_entry_focusout(self, event):
+        if self.link_entry.get() == '':
+           self.link_entry.insert(0, 'Put your link here ...')
+           self.link_entry.config(fg='grey')
 
 
 #def error(msg):
