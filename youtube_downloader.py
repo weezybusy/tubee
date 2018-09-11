@@ -5,10 +5,9 @@
 
 from __future__ import unicode_literals
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 from pathlib import Path
 import youtube_dl
-#import argparse
 
 
 class App(ttk.Frame):
@@ -34,6 +33,7 @@ class App(ttk.Frame):
         self.create_playlist_checkbutton()
         self.create_destination_button()
         self.create_download_button()
+        self.create_messagebox()
 
     def create_link_entry(self):
         self.link.set("Put your link here ...")
@@ -100,6 +100,9 @@ class App(ttk.Frame):
                 )
         self.download_button.pack()
 
+    def create_messagebox(self):
+        messagebox.showinfo(message="Test text")
+
     def on_link_entry_fucus(self, event):
         if str(self.link_entry.cget("foreground")) == "grey":
             self.link_entry.delete(0, "end")
@@ -107,45 +110,40 @@ class App(ttk.Frame):
             self.link_entry.config(foreground="black")
 
     def on_download_button_click(self):
-        self.test()
+        self.file_name = '%(title)s.%(ext)s'
+        self.dir_name = Path('.')
+        self.ydl_opts = { 'noplaylist': True }
+        
+        if self.type == 'audio':
+            self.ydl_opts['format'] = 'bestaudio/best'
+            self.ydl_opts['postprocessors'] = [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192'
+                }]
+        else:
+            self.ydl_opts['format'] = 'bestvideo[height<={0}]+bestaudio/best[height<={0}]'.format(self.resolution)
+        
+        if self.playlist == 1:
+            self.ydl_opts['noplaylist'] = False
+            self.file_name = '%(playlist_index)s-%(title)s.%(ext)s'
+        
+        self.dir_name = Path(str(self.destination.get())).expanduser()
+        if not (self.dir_name.exists() and self.dir_name.is_dir()):
+            print('\'{}\' is invalid path'.format(self.dir_name))
+            exit(1)
+        self.path = (self.dir_name / self.file_name).resolve()
+        self.ydl_opts['outtmpl'] = str(self.path)
 
-        #file_name = '%(title)s.%(ext)s'
-        #dir_name = Path('.')
-        #link = args.link
-        #ydl_opts = { 'noplaylist': True }
-        #
-        #if args.type:
-        #    if args.type == 'audio':
-        #        ydl_opts['format'] = 'bestaudio/best'
-        #        ydl_opts['postprocessors'] = [{
-        #                    'key': 'FFmpegExtractAudio',
-        #                    'preferredcodec': 'mp3',
-        #                    'preferredquality': '192'
-        #                    }]
-        #    elif args.type == 'video':
-        #        if args.resolution:
-        #            if args.resolution in [ '720', '1080' ]:
-        #                ydl_opts['format'] = 'bestvideo[height<={0}]+bestaudio/best[height<={0}]'.format(args.resolution)
-        #            else:
-        #                error('ERROR: invalid resolution')
-        #    else:
-        #        error('ERROR: invalid type')
-        #
-        #if args.playlist:
-        #    ydl_opts['noplaylist'] = False
-        #    file_name = '%(playlist_index)s-%(title)s.%(ext)s'
-        #
-        #if args.path:
-        #    dir_name = Path(args.path)
-        #    if not (dir_name.exists() and dir_name.is_dir()):
-        #        error('\'{}\' is invalid path'.format(dir_name))
-        #path = (dir_name / file_name).resolve()
-        #ydl_opts['outtmpl'] = str(path)
-        #
-        #with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        #        ydl.download([args.link])
+        with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
+            try:
+                ydl.download([str(self.link)])
+            except:
+                #TODO: add text field in GUI to print error messages.
+                exit(1)
+        
 
-    def test(self):
+    def test_widget_outputs(self):
         print(self.link.get())
         print(self.type.get())
         print(self.resolution.get())
