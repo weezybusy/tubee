@@ -33,7 +33,6 @@ class App(ttk.Frame):
         self.create_playlist_checkbutton()
         self.create_destination_button()
         self.create_download_button()
-        self.create_messagebox()
 
     def create_link_entry(self):
         self.link.set("Put your link here ...")
@@ -100,9 +99,6 @@ class App(ttk.Frame):
                 )
         self.download_button.pack()
 
-    def create_messagebox(self):
-        messagebox.showinfo(message="Test text")
-
     def on_link_entry_fucus(self, event):
         if str(self.link_entry.cget("foreground")) == "grey":
             self.link_entry.delete(0, "end")
@@ -138,10 +134,9 @@ class App(ttk.Frame):
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
             try:
                 ydl.download([str(self.link)])
-            except:
-                #TODO: add text field in GUI to print error messages.
+            except Exception as e:
+                messagebox.showinfo(message=e)
                 exit(1)
-        
 
     def test_widget_outputs(self):
         print(self.link.get())
