@@ -4,11 +4,12 @@
 
 
 from __future__ import unicode_literals
-import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from pathlib import Path
+import tkinter as tk
 import youtube_dl
 
+# TODO: add progression bar
 
 class App(ttk.Frame):
 
@@ -106,11 +107,13 @@ class App(ttk.Frame):
             self.link_entry.config(foreground="black")
 
     def on_download_button_click(self):
+        self.test_widget_outputs()
+
         self.file_name = '%(title)s.%(ext)s'
         self.dir_name = Path('.')
         self.ydl_opts = { 'noplaylist': True }
         
-        if self.type == 'audio':
+        if self.type.get() == 'audio':
             self.ydl_opts['format'] = 'bestaudio/best'
             self.ydl_opts['postprocessors'] = [{
                 'key': 'FFmpegExtractAudio',
@@ -118,9 +121,9 @@ class App(ttk.Frame):
                 'preferredquality': '192'
                 }]
         else:
-            self.ydl_opts['format'] = 'bestvideo[height<={0}]+bestaudio/best[height<={0}]'.format(self.resolution)
+            self.ydl_opts['format'] = 'bestvideo[height<={0}]+bestaudio/best[height<={0}]'.format(self.resolution.get())
         
-        if self.playlist == 1:
+        if self.playlist.get() == 1:
             self.ydl_opts['noplaylist'] = False
             self.file_name = '%(playlist_index)s-%(title)s.%(ext)s'
         
@@ -133,9 +136,10 @@ class App(ttk.Frame):
 
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
             try:
-                ydl.download([str(self.link)])
+                pass
+                #ydl.download([str(self.link.get())])
             except Exception as e:
-                messagebox.showinfo(message=e)
+                #messagebox.showinfo(message=e)
                 exit(1)
 
     def test_widget_outputs(self):
@@ -150,6 +154,7 @@ def main():
     root = tk.Tk()
     youtube_downloader = App(root)
     root.mainloop()
+
 
 if __name__ == "__main__":
     main()
