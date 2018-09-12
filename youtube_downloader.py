@@ -31,8 +31,8 @@ class App(ttk.Frame):
 
     def create_widgets(self):
         self.create_link_entry()
-        self.create_type_optionmenu()
-        self.create_resolution_optionmenu()
+        self.create_type_combobox()
+        self.create_resolution_combobox()
         self.create_playlist_checkbutton()
         self.create_destination_button()
         self.create_download_button()
@@ -47,29 +47,27 @@ class App(ttk.Frame):
                 textvariable=self.link
                 )
         self.link_entry.bind("<FocusIn>", self.on_link_entry_fucus)
-        self.link_entry.pack()
+        self.link_entry.pack(anchor=tk.W)
 
-    def create_type_optionmenu(self):
-        self.options = [ "", "audio", "video" ]
-        self.type.set(self.options[2])
-        self.type_option_menu = ttk.OptionMenu(
+    def create_type_combobox(self):
+        self.type.set("video")
+        self.type_combobox = ttk.Combobox(
                 self.master,
-                self.type,
-                *self.options
+                values="audio video",
+                textvariable=self.type
                 )
-        self.type_option_menu.configure(width=5)
-        self.type_option_menu.pack()
+        self.type_combobox.configure(width=10)
+        self.type_combobox.pack(anchor=tk.W)
 
-    def create_resolution_optionmenu(self):
-        self.options = [ "", "480p", "720p", "1080p" ]
-        self.resolution.set(self.options[2])
-        self.resolution_option_menu = ttk.OptionMenu(
+    def create_resolution_combobox(self):
+        self.resolution.set("720p")
+        self.resolution_combobox = ttk.Combobox(
                 self.master,
-                self.resolution,
-                *self.options
+                values="480p 720p 1080p",
+                textvariable=self.resolution
                 )
-        self.resolution_option_menu.configure(width=5)
-        self.resolution_option_menu.pack()
+        self.resolution_combobox.configure(width=10)
+        self.resolution_combobox.pack(anchor=tk.W)
 
     def create_playlist_checkbutton(self):
         self.playlist.set(0)
@@ -78,7 +76,7 @@ class App(ttk.Frame):
                 text='Playlist',
                 variable=self.playlist
                 )
-        self.playlist_checkbutton.pack()
+        self.playlist_checkbutton.pack(anchor=tk.W)
 
     def create_destination_button(self):
         self.destination.set("~/Downloads")
@@ -88,7 +86,7 @@ class App(ttk.Frame):
                 command=self.on_destination_button_click
                 )
         self.destination_button.configure(width=10)
-        self.destination_button.pack()
+        self.destination_button.pack(anchor=tk.W)
 
     def on_destination_button_click(self):
         self.destination.set(tk.filedialog.askdirectory(
@@ -104,7 +102,7 @@ class App(ttk.Frame):
                 command=self.on_download_button_click
                 )
         self.download_button.configure(width=10)
-        self.download_button.pack()
+        self.download_button.pack(anchor=tk.W)
 
     def on_link_entry_fucus(self, event):
         if str(self.link_entry.cget("foreground")) == "grey":
