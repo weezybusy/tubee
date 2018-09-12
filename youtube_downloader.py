@@ -9,7 +9,9 @@ from pathlib import Path
 import tkinter as tk
 import youtube_dl
 
+
 # TODO: add progression bar
+
 
 class App(ttk.Frame):
 
@@ -17,7 +19,7 @@ class App(ttk.Frame):
         super().__init__(master, *args, **kwargs)
         self.master = master
         self.master.title("Youtube Downloader")
-        self.master.geometry("400x200")
+        self.master.configure(padx=10, pady=10)
 
         self.link = tk.StringVar()
         self.type = tk.StringVar()
@@ -48,23 +50,25 @@ class App(ttk.Frame):
         self.link_entry.pack()
 
     def create_type_optionmenu(self):
-        self.choices = [ "", "audio", "video" ]
-        self.type.set(self.choices[2])
+        self.options = [ "", "audio", "video" ]
+        self.type.set(self.options[2])
         self.type_option_menu = ttk.OptionMenu(
                 self.master,
                 self.type,
-                *self.choices
+                *self.options
                 )
+        self.type_option_menu.configure(width=5)
         self.type_option_menu.pack()
 
     def create_resolution_optionmenu(self):
-        self.choices = [ "", 480, 720, 1080 ]
-        self.resolution.set(self.choices[2])
+        self.options = [ "", "480p", "720p", "1080p" ]
+        self.resolution.set(self.options[2])
         self.resolution_option_menu = ttk.OptionMenu(
                 self.master,
                 self.resolution,
-                *self.choices
+                *self.options
                 )
+        self.resolution_option_menu.configure(width=5)
         self.resolution_option_menu.pack()
 
     def create_playlist_checkbutton(self):
@@ -83,6 +87,7 @@ class App(ttk.Frame):
                 text='Destination',
                 command=self.on_destination_button_click
                 )
+        self.destination_button.configure(width=10)
         self.destination_button.pack()
 
     def on_destination_button_click(self):
@@ -98,6 +103,7 @@ class App(ttk.Frame):
                 text="Download",
                 command=self.on_download_button_click
                 )
+        self.download_button.configure(width=10)
         self.download_button.pack()
 
     def on_link_entry_fucus(self, event):
@@ -107,47 +113,41 @@ class App(ttk.Frame):
             self.link_entry.config(foreground="black")
 
     def on_download_button_click(self):
-        self.test_widget_outputs()
-
-        self.file_name = '%(title)s.%(ext)s'
-        self.dir_name = Path('.')
-        self.ydl_opts = { 'noplaylist': True }
+        self.name = "%(title)s.%(ext)s"
+        self.dir = Path(".")
+        self.ydl_opts = { "noplaylist": True }
         
-        if self.type.get() == 'audio':
-            self.ydl_opts['format'] = 'bestaudio/best'
-            self.ydl_opts['postprocessors'] = [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192'
+        if self.type.get() == "audio":
+            self.ydl_opts["format"] = "bestaudio/best"
+            self.ydl_opts["postprocessors"] = [{
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "mp3",
+                "preferredquality": "192"
                 }]
         else:
             self.ydl_opts['format'] = 'bestvideo[height<={0}]+bestaudio/best[height<={0}]'.format(self.resolution.get())
         
         if self.playlist.get() == 1:
-            self.ydl_opts['noplaylist'] = False
-            self.file_name = '%(playlist_index)s-%(title)s.%(ext)s'
+            self.ydl_opts["noplaylist"] = False
+            self.name = "%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
         
-        self.dir_name = Path(str(self.destination.get())).expanduser()
-        if not (self.dir_name.exists() and self.dir_name.is_dir()):
-            print('\'{}\' is invalid path'.format(self.dir_name))
+        self.dir = Path(str(self.destination.get())).expanduser()
+        if not (self.dir.exists() and self.dir.is_dir()):
+            print("\'{}\' is invalid path".format(self.dir))
             exit(1)
-        self.path = (self.dir_name / self.file_name).resolve()
-        self.ydl_opts['outtmpl'] = str(self.path)
+        self.path = (self.dir / self.name).resolve()
+        self.ydl_opts["outtmpl"] = str(self.path)
 
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
             try:
-                pass
+                print(self.link.get())
+                print(self.type.get())
+                print(self.resolution.get())
+                print(self.path)
                 #ydl.download([str(self.link.get())])
             except Exception as e:
                 #messagebox.showinfo(message=e)
                 exit(1)
-
-    def test_widget_outputs(self):
-        print(self.link.get())
-        print(self.type.get())
-        print(self.resolution.get())
-        print(self.playlist.get())
-        print(self.destination.get())
 
 
 def main():
