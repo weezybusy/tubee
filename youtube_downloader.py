@@ -12,6 +12,7 @@ import youtube_dl
 
 # TODO: add progression bar
 
+debug = True
 
 class App(ttk.Frame):
 
@@ -60,10 +61,10 @@ class App(ttk.Frame):
         self.type_combobox.pack(anchor=tk.W)
 
     def create_resolution_combobox(self):
-        self.resolution.set("720p")
+        self.resolution.set("720")
         self.resolution_combobox = ttk.Combobox(
                 self.master,
-                values="480p 720p 1080p",
+                values="480 720 1080",
                 textvariable=self.resolution
                 )
         self.resolution_combobox.configure(width=10)
@@ -124,6 +125,7 @@ class App(ttk.Frame):
                 }]
         else:
             self.ydl_opts['format'] = 'bestvideo[height<={0}]+bestaudio/best[height<={0}]'.format(self.resolution.get())
+            print(self.ydl_opts['format'])
         
         if self.playlist.get() == 1:
             self.ydl_opts["noplaylist"] = False
@@ -138,13 +140,21 @@ class App(ttk.Frame):
 
         with youtube_dl.YoutubeDL(self.ydl_opts) as ydl:
             try:
-                print(self.link.get())
-                print(self.type.get())
-                print(self.resolution.get())
-                print(self.path)
-                #ydl.download([str(self.link.get())])
+                if debug == True:
+                    print(self.link.get())
+                    print(self.type.get())
+                    print(self.resolution.get())
+                    print(self.path)
+                    result = ydl.extract_info(
+                            str(self.link.get()),
+                            download=False # Extract the info.
+                            )
+                    print(result['format'])
+                else:
+                    ydl.download([str(self.link.get())])
             except Exception as e:
-                #messagebox.showinfo(message=e)
+                if debug == True:
+                    messagebox.showinfo(message=e)
                 exit(1)
 
 
