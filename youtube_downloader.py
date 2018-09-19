@@ -30,6 +30,18 @@ class App(ttk.Frame):
         self.create_destination_button()
         self.create_download_button()
 
+        self.style = ttk.Style()
+        self.style.configure("Download.TButton", background="green",
+                foreground="white", font="helvetica 12 bold")
+        self.style.map("Download.TButton",
+                background=[
+                    ("disabled", "yellow"),
+                    ("pressed", "#ff471a"),
+                    ("active", "#ff471a")
+                    ],
+                relief=[ ('pressed', '!disabled', 'sunken') ]
+                )
+
     def create_link_entry(self):
         self.link.set("Put your link here ...")
         self.link_entry = ttk.Entry(
@@ -89,7 +101,8 @@ class App(ttk.Frame):
         self.download_button = ttk.Button(
                 self.master,
                 text="Download",
-                command=self.on_download_button_click
+                command=self.on_download_button_click,
+                style="Download.TButton"
                 )
         self.download_button.configure(width=10)
         self.download_button.pack(anchor=tk.W)
