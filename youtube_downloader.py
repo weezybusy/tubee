@@ -11,8 +11,8 @@ import youtube_dl
 
 
 class App(ttk.Frame):
-    def __init__(self, master=None, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master=None):
+        super().__init__(master)
         self.master = master
         self.master.title("Youtube Downloader")
         self.master.configure(padx=10, pady=10)
@@ -98,6 +98,7 @@ class App(ttk.Frame):
         self.destination_button.pack(anchor=tk.W)
 
     def create_download_button(self):
+        self.download_button_is_clicked = False
         self.download_button = ttk.Button(
                 self.master,
                 text="Download",
@@ -127,8 +128,12 @@ class App(ttk.Frame):
         else:
             self.resolution_combobox.configure(state='readonly')
 
-
     def on_download_button_click(self):
+
+        if self.download_button_is_clicked == True:
+            return
+        self.download_button_is_clicked = True
+
         name = "%(title)s.%(ext)s"
         ydl_opts = {
                 "noplaylist": True,
@@ -143,7 +148,7 @@ class App(ttk.Frame):
                 "preferredquality": "192"
                 }]
         else:
-            ydl_opts['format'] = f"bestvideo[height<={self.resolution.get()}]+bestaudio/best"
+            ydl_opts['format'] = f"(mp4)[height<={self.resolution.get()}]"
         
         if self.playlist.get() == 1:
             ydl_opts["noplaylist"] = False
@@ -158,6 +163,8 @@ class App(ttk.Frame):
             except Exception:
                 self.link_entry.configure(foreground="red")
                 self.link.set("Download error")
+
+        self.download_button_is_clicked = False
 
 
 def main():
