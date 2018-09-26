@@ -16,14 +16,58 @@ class App(ttk.Frame):
         self.master = master
         self.master.title("Youtube Downloader")
 
+        # Create variables.
         self.link = tk.StringVar()
         self.type = tk.StringVar()
         self.resolution = tk.StringVar()
         self.playlist = tk.IntVar()
         self.destination = tk.StringVar()
 
-        self.default_fg = "#282828"
+        # Colors.
+        self.fg = "#475263"
+        self.bg = "#ffffff"
+        self.select_fg = "#475263"
+        self.select_bg = "#a4ced4"
+        self.download_button_inactive_fg = "#ffffff"
+        self.download_button_inactive_bg = "#43474f"
+        self.download_button_active_fg = "#ffffff"
+        self.download_button_active_bg = "#6b7d81"
+        self.error_text = "red"
 
+        # Styles.
+        style = ttk.Style()
+        style.configure("TEntry", selectforeground=self.select_fg,
+                selectbackground=self.select_bg)
+
+        style = ttk.Style()
+        style.configure("TCombobox", foreground=self.fg)
+        style.map('TCombobox', fieldbackground=[('readonly', self.bg)])
+        self.master.option_add("*TCombobox*Listbox.background", self.bg)
+        self.master.option_add("*TCombobox*Listbox.foreground", self.fg)
+        self.master.option_add("*TCombobox*Listbox.selectBackground", self.select_bg)
+        self.master.option_add("*TCombobox*Listbox.selectForeground", self.select_fg)
+
+        style = ttk.Style()
+        style.configure("TCheckbutton", foreground=self.fg)
+
+        style = ttk.Style()
+        style.configure("TButton", foreground=self.fg)
+
+        style = ttk.Style()
+        style.configure("Download.TButton",
+                background=self.download_button_inactive_bg,
+                foreground=self.download_button_active_fg,
+                font=("TkDefaultFont", 10, "bold"))
+        style.map("Download.TButton",
+                background=[
+                    ("disabled", self.download_button_active_bg),
+                    ("pressed", self.download_button_active_bg),
+                    ("active", self.download_button_active_bg)
+                    ],
+                relief=[ ('pressed', '!disabled', 'sunken') ]
+                )
+
+        # Create widgets.
         self.create_link_entry()
         self.create_type_combobox()
         self.create_resolution_combobox()
@@ -33,9 +77,6 @@ class App(ttk.Frame):
 
     # TODO: add scrollbar to entry.
     def create_link_entry(self):
-        style = ttk.Style()
-        style.configure("LinkEntry.TEntry", selectbackground=self.default_fg,
-                selectforeground="white")
         self.link.set("Put your link here ...")
         self.link_entry = ttk.Entry(
                 self.master,
@@ -43,30 +84,25 @@ class App(ttk.Frame):
                 width=47,
                 foreground="grey",
                 textvariable=self.link,
-                style="LinkEntry.TEntry"
                 )
-        self.link_entry.bind("<FocusIn>", self.on_link_entry_fucus)
+        self.link_entry.bind("<FocusIn>", self._on_link_entry_focus)
         self.link_entry.grid(row=0, column=0, padx=5, pady=5, columnspan=4,
                 sticky=tk.W+tk.E)
 
     def create_type_combobox(self):
-        style = ttk.Style()
-        style.configure("Type.TCombobox", foreground=self.default_fg)
         self.type.set("video")
         self.type_combobox = ttk.Combobox(
                 self.master,
                 values="audio video",
                 state="readonly",
-                textvariable=self.type,
+                width=10,
+                textvariable=self.type
                 )
-        self.type_combobox.configure(width=10, style="Type.TCombobox")
         self.type_combobox.bind("<<ComboboxSelected>>",
-                self.on_new_type_selection)
+                self._on_new_type_selection)
         self.type_combobox.grid(row=2, column=0)
 
     def create_resolution_combobox(self):
-        style = ttk.Style()
-        style.configure("Resolution.TCombobox", foreground=self.default_fg)
         self.resolution.set("720")
         self.resolution_combobox = ttk.Combobox(
                 self.master,
@@ -74,87 +110,67 @@ class App(ttk.Frame):
                 width=10,
                 state="readonly",
                 textvariable=self.resolution,
-                style="Resolution.TCombobox"
                 )
         self.resolution_combobox.bind("<<ComboboxSelected>>",
-                self.on_new_resolution_selection)
+                self._on_new_resolution_selection)
         self.resolution_combobox.grid(row=2, column=1)
 
     # TODO: find out how to change color of dot.
     def create_playlist_checkbutton(self):
-        style = ttk.Style()
-        style.configure("Playlist.TCheckbutton", foreground=self.default_fg)
         self.playlist.set(0)
         self.playlist_checkbutton = ttk.Checkbutton(
                 self.master,
                 text='Playlist',
                 variable=self.playlist,
-                style="Playlist.TCheckbutton"
                 )
-        self.playlist_checkbutton.configure
         self.playlist_checkbutton.grid(row=2, column=2)
 
     def create_destination_button(self):
-        style = ttk.Style()
-        style.configure("Destination.TButton", foreground=self.default_fg)
         self.destination.set("~/Downloads")
         self.destination_button = ttk.Button(
                 self.master,
                 text='Destination',
-                style="Destination.TButton",
-                command=self.on_destination_button_click
+                width=10,
+                command=self._on_destination_button_click
                 )
-        self.destination_button.configure(width=10)
         self.destination_button.grid(row=2, column=3)
 
     def create_download_button(self):
-        style = ttk.Style()
-        style.configure("Download.TButton", background="green",
-                foreground="white",  font=("TkDefaultFont", 10, "bold"))
-        style.map("Download.TButton",
-                background=[
-                    ("disabled", "yellow"),
-                    ("pressed", "#ff471a"),
-                    ("active", "red")
-                    ],
-                relief=[ ('pressed', '!disabled', 'sunken') ]
-                )
         self.download_button = ttk.Button(
                 self.master,
                 text="Download",
-                command=self.on_download_button_click,
-                style="Download.TButton"
+                width=10,
+                style="Download.TButton",
+                command=self._on_download_button_click,
                 )
-        self.download_button.configure(width=10)
         self.download_button.grid(padx=5, pady=10, columnspan=4)
         self.download_button_is_clicked = False
 
-    def on_destination_button_click(self):
+    def _on_link_entry_focus(self, event):
+        colors = [ "grey", "red" ]
+        if str(self.link_entry.cget("foreground")) in colors:
+            self.link_entry.delete(0, "end")
+            self.link_entry.insert(0, "")
+            self.link_entry.config(foreground=self.fg)
+
+    def _on_destination_button_click(self):
         self.destination.set(tk.filedialog.askdirectory(
                 initialdir='~/Downloads',
                 title='Select directory'
                 )
             )
 
-    def on_link_entry_fucus(self, event):
-        colors = [ "grey", "red" ]
-        if str(self.link_entry.cget("foreground")) in colors:
-            self.link_entry.delete(0, "end")
-            self.link_entry.insert(0, "")
-            self.link_entry.config(foreground=self.default_fg)
-
-    def on_new_type_selection(self, event):
+    def _on_new_type_selection(self, event):
         self.type_combobox.selection_clear()
         if self.type.get() == 'audio':
             self.resolution_combobox.configure(state='disabled')
         else:
             self.resolution_combobox.configure(state='readonly')
 
-    def on_new_resolution_selection(self, event):
+    def _on_new_resolution_selection(self, event):
         self.resolution_combobox.selection_clear()
 
-    def on_download_button_click(self):
-
+    def _on_download_button_click(self):
         if self.download_button_is_clicked == True:
             return
         self.download_button_is_clicked = True
@@ -164,7 +180,6 @@ class App(ttk.Frame):
                 "noplaylist": True,
                 "quiet": True
                 }
-
         if self.type.get() == "audio":
             ydl_opts["format"] = "bestaudio/best"
             ydl_opts["postprocessors"] = [{
@@ -178,7 +193,6 @@ class App(ttk.Frame):
         if self.playlist.get() == 1:
             ydl_opts["noplaylist"] = False
             name = "%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
-
         path = Path(self.destination.get()).expanduser()
         ydl_opts["outtmpl"] = str((path / name).resolve())
 
@@ -187,15 +201,13 @@ class App(ttk.Frame):
                 ydl.download([self.link.get()])
             except Exception:
                 self.link_entry.configure(foreground="red")
-                self.link.set("Download error")
+                self.link.set("DOWNLOAD ERROR")
+            else:
+                self._on_download_complete()
 
-        self.on_download_complete()
-
-
-    def on_download_complete(self):
+    def _on_download_complete(self):
         self.download_button_is_clicked = False
-        self.link_entry.set("Download complete")
-
+        self.link.set("DOWNLOAD COMPLETE")
 
 
 def main():
