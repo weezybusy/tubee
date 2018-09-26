@@ -23,46 +23,47 @@ class App(ttk.Frame):
         self.playlist = tk.IntVar()
         self.destination = tk.StringVar()
 
-        # Colors.
-        self.fg = "#475263"
-        self.bg = "#ffffff"
-        self.select_fg = "#475263"
-        self.select_bg = "#a4ced4"
-        self.download_button_inactive_fg = "#ffffff"
-        self.download_button_inactive_bg = "#43474f"
-        self.download_button_active_fg = "#ffffff"
-        self.download_button_active_bg = "#6b7d81"
-        self.error_text = "red"
+        # Create colors.
+        self.fg_color = "#475263"
+        self.bg_color = "#ffffff"
+        self.select_fg_color = "#475263"
+        self.select_bg_color = "#a4ced4"
+        self.entry_inactive_fg_color = "#6b7d81"
+        self.download_button_inactive_fg_color = "#ffffff"
+        self.download_button_inactive_bg_color = "#43474f"
+        self.download_button_active_fg_color = "#ffffff"
+        self.download_button_active_bg_color = "#6b7d81"
+        self.error_fg_color = "#cd3333"
 
-        # Styles.
+        # Create styles.
         style = ttk.Style()
-        style.configure("TEntry", selectforeground=self.select_fg,
-                selectbackground=self.select_bg)
-
-        style = ttk.Style()
-        style.configure("TCombobox", foreground=self.fg)
-        style.map('TCombobox', fieldbackground=[('readonly', self.bg)])
-        self.master.option_add("*TCombobox*Listbox.background", self.bg)
-        self.master.option_add("*TCombobox*Listbox.foreground", self.fg)
-        self.master.option_add("*TCombobox*Listbox.selectBackground", self.select_bg)
-        self.master.option_add("*TCombobox*Listbox.selectForeground", self.select_fg)
+        style.configure("TEntry", selectforeground=self.select_fg_color,
+                selectbackground=self.select_bg_color)
 
         style = ttk.Style()
-        style.configure("TCheckbutton", foreground=self.fg)
+        style.configure("TCombobox", foreground=self.fg_color)
+        style.map('TCombobox', fieldbackground=[('readonly', self.bg_color)])
+        self.master.option_add("*TCombobox*Listbox.background", self.bg_color)
+        self.master.option_add("*TCombobox*Listbox.foreground", self.fg_color)
+        self.master.option_add("*TCombobox*Listbox.selectBackground", self.select_bg_color)
+        self.master.option_add("*TCombobox*Listbox.selectForeground", self.select_fg_color)
 
         style = ttk.Style()
-        style.configure("TButton", foreground=self.fg)
+        style.configure("TCheckbutton", foreground=self.fg_color)
+
+        style = ttk.Style()
+        style.configure("TButton", foreground=self.fg_color)
 
         style = ttk.Style()
         style.configure("Download.TButton",
-                background=self.download_button_inactive_bg,
-                foreground=self.download_button_active_fg,
+                background=self.download_button_inactive_bg_color,
+                foreground=self.download_button_active_fg_color,
                 font=("TkDefaultFont", 10, "bold"))
         style.map("Download.TButton",
                 background=[
-                    ("disabled", self.download_button_active_bg),
-                    ("pressed", self.download_button_active_bg),
-                    ("active", self.download_button_active_bg)
+                    ("disabled", self.download_button_active_bg_color),
+                    ("pressed", self.download_button_active_bg_color),
+                    ("active", self.download_button_active_bg_color)
                     ],
                 relief=[ ('pressed', '!disabled', 'sunken') ]
                 )
@@ -82,7 +83,7 @@ class App(ttk.Frame):
                 self.master,
                 takefocus=False,
                 width=47,
-                foreground="grey",
+                foreground=self.entry_inactive_fg_color,
                 textvariable=self.link,
                 )
         self.link_entry.bind("<FocusIn>", self._on_link_entry_focus)
@@ -147,11 +148,11 @@ class App(ttk.Frame):
         self.download_button_is_clicked = False
 
     def _on_link_entry_focus(self, event):
-        colors = [ "grey", "red" ]
+        colors = [self.error_fg_color, self.entry_inactive_fg_color ]
         if str(self.link_entry.cget("foreground")) in colors:
             self.link_entry.delete(0, "end")
             self.link_entry.insert(0, "")
-            self.link_entry.config(foreground=self.fg)
+            self.link_entry.config(foreground=self.fg_color)
 
     def _on_destination_button_click(self):
         self.destination.set(tk.filedialog.askdirectory(
@@ -200,7 +201,7 @@ class App(ttk.Frame):
             try:
                 ydl.download([self.link.get()])
             except Exception:
-                self.link_entry.configure(foreground="red")
+                self.link_entry.configure(foreground=self.error_fg_color)
                 self.link.set("DOWNLOAD ERROR")
             else:
                 self._on_download_complete()
