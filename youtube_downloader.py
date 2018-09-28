@@ -71,25 +71,36 @@ class App(ttk.Frame):
                 )
 
         # Create widgets.
-        self.create_link_entry()
+        self.create_entry_frame()
         self.create_type_combobox()
         self.create_resolution_combobox()
         self.create_playlist_checkbutton()
         self.create_destination_button()
         self.create_download_button()
 
-    # TODO: add scrollbar to entry.
+    def create_entry_frame(self):
+        self.entry_frame = ttk.Frame(self.master)
+        self.entry_frame.grid(row=0, column=0, padx=5, pady=5, columnspan=4,
+                sticky=tk.W+tk.E)
+        self.create_link_entry()
+
     def create_link_entry(self):
         self.link_entry = ttk.Entry(
-                self.master,
-                takefocus=False,
-                width=47,
+                self.entry_frame,
+                width=50,
                 foreground=self.entry_inactive_fg_color,
                 textvariable=self.link,
                 )
         self.link_entry.bind("<FocusIn>", self._on_link_entry_focus)
         self.link.set("Put your link here ...")
-        self.link_entry.grid(row=0, column=0, padx=5, pady=5, columnspan=4,
+        self.link_entry.grid(row=0, column=0, columnspan=4, sticky=tk.W+tk.E)
+        self.create_entry_scrollbar()
+        self.link_entry.configure(xscrollcommand=self.entry_scrollbar.set)
+
+    def create_entry_scrollbar(self):
+        self.entry_scrollbar = ttk.Scrollbar(self.entry_frame,
+                orient=tk.HORIZONTAL, command=self.link_entry.xview)
+        self.entry_scrollbar.grid(row=1, column=0, columnspan=4,
                 sticky=tk.W+tk.E)
 
     def create_type_combobox(self):
@@ -118,7 +129,6 @@ class App(ttk.Frame):
         self.resolution.set("720")
         self.resolution_combobox.grid(row=2, column=1)
 
-    # TODO: find out how to change color of dot.
     def create_playlist_checkbutton(self):
         self.playlist_checkbutton = ttk.Checkbutton(
                 self.master,
