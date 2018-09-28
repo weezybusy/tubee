@@ -10,6 +10,27 @@ import tkinter as tk
 import youtube_dl
 
 
+class AutoScrollbar(ttk.Scrollbar):
+
+    """
+    A scrollbar that hides itself if it's not needed.
+    Only # works if you use the grid geometry manager.
+    """
+
+    def set(self, lo, hi):
+        if float(lo) <= 0.0 and float(hi) >= 1.0:
+            self.grid_remove()
+        else:
+            self.grid()
+        ttk.Scrollbar.set(self, lo, hi)
+
+    def pack(self, **kw):
+        raise TclError("cannot use pack with this widget")
+
+    def place(self, **kw):
+        raise TclError("cannot use place with this widget")
+
+
 class App(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -98,7 +119,9 @@ class App(ttk.Frame):
         self.link_entry.configure(xscrollcommand=self.entry_scrollbar.set)
 
     def create_entry_scrollbar(self):
-        self.entry_scrollbar = ttk.Scrollbar(self.entry_frame,
+        #self.entry_scrollbar = ttk.Scrollbar(self.entry_frame,
+        #        orient=tk.HORIZONTAL, command=self.link_entry.xview)
+        self.entry_scrollbar = AutoScrollbar(self.entry_frame,
                 orient=tk.HORIZONTAL, command=self.link_entry.xview)
         self.entry_scrollbar.grid(row=1, column=0, columnspan=4,
                 sticky=tk.W+tk.E)
