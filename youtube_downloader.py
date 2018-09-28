@@ -42,11 +42,13 @@ class App(ttk.Frame):
 
         style = ttk.Style()
         style.configure("TCombobox", foreground=self.fg_color)
-        style.map('TCombobox', fieldbackground=[('readonly', self.bg_color)])
+        style.map("TCombobox", fieldbackground=[("readonly", self.bg_color)])
         self.master.option_add("*TCombobox*Listbox.background", self.bg_color)
         self.master.option_add("*TCombobox*Listbox.foreground", self.fg_color)
-        self.master.option_add("*TCombobox*Listbox.selectBackground", self.select_bg_color)
-        self.master.option_add("*TCombobox*Listbox.selectForeground", self.select_fg_color)
+        self.master.option_add("*TCombobox*Listbox.selectBackground",
+                self.select_bg_color)
+        self.master.option_add("*TCombobox*Listbox.selectForeground",
+                self.select_fg_color)
 
         style = ttk.Style()
         style.configure("TCheckbutton", foreground=self.fg_color)
@@ -65,7 +67,7 @@ class App(ttk.Frame):
                     ("pressed", self.download_button_active_bg_color),
                     ("active", self.download_button_active_bg_color)
                     ],
-                relief=[ ('pressed', '!disabled', 'sunken') ]
+                relief=[ ("pressed", "!disabled", "sunken") ]
                 )
 
         # Create widgets.
@@ -78,7 +80,6 @@ class App(ttk.Frame):
 
     # TODO: add scrollbar to entry.
     def create_link_entry(self):
-        self.link.set("Put your link here ...")
         self.link_entry = ttk.Entry(
                 self.master,
                 takefocus=False,
@@ -87,11 +88,11 @@ class App(ttk.Frame):
                 textvariable=self.link,
                 )
         self.link_entry.bind("<FocusIn>", self._on_link_entry_focus)
+        self.link.set("Put your link here ...")
         self.link_entry.grid(row=0, column=0, padx=5, pady=5, columnspan=4,
                 sticky=tk.W+tk.E)
 
     def create_type_combobox(self):
-        self.type.set("video")
         self.type_combobox = ttk.Combobox(
                 self.master,
                 values="audio video",
@@ -101,10 +102,10 @@ class App(ttk.Frame):
                 )
         self.type_combobox.bind("<<ComboboxSelected>>",
                 self._on_new_type_selection)
+        self.type.set("video")
         self.type_combobox.grid(row=2, column=0)
 
     def create_resolution_combobox(self):
-        self.resolution.set("720")
         self.resolution_combobox = ttk.Combobox(
                 self.master,
                 values="360 480 720 1080",
@@ -114,26 +115,27 @@ class App(ttk.Frame):
                 )
         self.resolution_combobox.bind("<<ComboboxSelected>>",
                 self._on_new_resolution_selection)
+        self.resolution.set("720")
         self.resolution_combobox.grid(row=2, column=1)
 
     # TODO: find out how to change color of dot.
     def create_playlist_checkbutton(self):
-        self.playlist.set(0)
         self.playlist_checkbutton = ttk.Checkbutton(
                 self.master,
-                text='Playlist',
+                text="Playlist",
                 variable=self.playlist,
                 )
+        self.playlist.set(0)
         self.playlist_checkbutton.grid(row=2, column=2)
 
     def create_destination_button(self):
-        self.destination.set("~/Downloads")
         self.destination_button = ttk.Button(
                 self.master,
-                text='Destination',
+                text="Destination",
                 width=10,
                 command=self._on_destination_button_click
                 )
+        self.destination.set("~/Downloads")
         self.destination_button.grid(row=2, column=3)
 
     def create_download_button(self):
@@ -148,7 +150,7 @@ class App(ttk.Frame):
         self.download_button_is_clicked = False
 
     def _on_link_entry_focus(self, event):
-        colors = [self.error_fg_color, self.entry_inactive_fg_color ]
+        colors = [self.error_fg_color, self.entry_inactive_fg_color]
         if str(self.link_entry.cget("foreground")) in colors:
             self.link_entry.delete(0, "end")
             self.link_entry.insert(0, "")
@@ -156,17 +158,17 @@ class App(ttk.Frame):
 
     def _on_destination_button_click(self):
         self.destination.set(tk.filedialog.askdirectory(
-                initialdir='~/Downloads',
-                title='Select directory'
+                initialdir="~/Downloads",
+                title="Select directory"
                 )
             )
 
     def _on_new_type_selection(self, event):
         self.type_combobox.selection_clear()
-        if self.type.get() == 'audio':
-            self.resolution_combobox.configure(state='disabled')
+        if self.type.get() == "audio":
+            self.resolution_combobox.configure(state="disabled")
         else:
-            self.resolution_combobox.configure(state='readonly')
+            self.resolution_combobox.configure(state="readonly")
 
     def _on_new_resolution_selection(self, event):
         self.resolution_combobox.selection_clear()
@@ -189,7 +191,7 @@ class App(ttk.Frame):
                 "preferredquality": "192"
                 }]
         else:
-            ydl_opts['format'] = f"(mp4)[height<={self.resolution.get()}]"
+            ydl_opts["format"] = f"(mp4)[height<={self.resolution.get()}]"
 
         if self.playlist.get() == 1:
             ydl_opts["noplaylist"] = False
