@@ -12,9 +12,8 @@ import youtube_dl
 
 class AutoScrollbar(ttk.Scrollbar):
 
-    """
-    A scrollbar that hides itself if it's not needed.
-    Only # works if you use the grid geometry manager.
+    """ A scrollbar that hides itself if it's not needed.
+    Only works if you use the grid geometry manager.
     """
 
     def set(self, lo, hi):
@@ -32,10 +31,10 @@ class AutoScrollbar(ttk.Scrollbar):
 
 
 class App(ttk.Frame):
-    def __init__(self, master=None):
+    def __init__(self, master=None, **kw):
         super().__init__(master)
         self.master = master
-        self.master.title("Youtube Downloader")
+        self.master.title("Diarrhea")
 
         # Create variables.
         self.link = tk.StringVar()
@@ -57,6 +56,7 @@ class App(ttk.Frame):
         self.error_fg_color = "#cd3333"
 
         # Create styles.
+
         style = ttk.Style()
         style.configure("TEntry", selectforeground=self.select_fg_color,
                 selectbackground=self.select_bg_color)
@@ -75,7 +75,7 @@ class App(ttk.Frame):
         style.configure("TCheckbutton", foreground=self.fg_color)
 
         style = ttk.Style()
-        style.configure("TButton", foreground=self.fg_color)
+        style.configure("Destination.TButton", foreground=self.fg_color)
 
         style = ttk.Style()
         style.configure("Download.TButton",
@@ -119,8 +119,6 @@ class App(ttk.Frame):
         self.link_entry.configure(xscrollcommand=self.entry_scrollbar.set)
 
     def create_entry_scrollbar(self):
-        #self.entry_scrollbar = ttk.Scrollbar(self.entry_frame,
-        #        orient=tk.HORIZONTAL, command=self.link_entry.xview)
         self.entry_scrollbar = AutoScrollbar(self.entry_frame,
                 orient=tk.HORIZONTAL, command=self.link_entry.xview)
         self.entry_scrollbar.grid(row=1, column=0, columnspan=4,
@@ -166,6 +164,7 @@ class App(ttk.Frame):
                 self.master,
                 text="Destination",
                 width=10,
+                style="Destination.TButton",
                 command=self._on_destination_button_click
                 )
         self.destination.set("~/Downloads")
@@ -192,7 +191,7 @@ class App(ttk.Frame):
     def _on_destination_button_click(self):
         self.destination.set(tk.filedialog.askdirectory(
                 initialdir="~/Downloads",
-                title="Select directory"
+                title="Select destination directory"
                 )
             )
 
