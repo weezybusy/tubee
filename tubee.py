@@ -61,20 +61,9 @@ class App(ttk.Frame):
                 selectbackground=self.select_bg_color)
 
         style = ttk.Style()
-        style.configure("TCombobox", foreground=self.fg_color)
         style.map("TCombobox", fieldbackground=[("readonly", self.bg_color)])
-        self.master.option_add("*TCombobox*Listbox.background", self.bg_color)
-        self.master.option_add("*TCombobox*Listbox.foreground", self.fg_color)
         self.master.option_add("*TCombobox*Listbox.selectBackground",
                 self.select_bg_color)
-        self.master.option_add("*TCombobox*Listbox.selectForeground",
-                self.select_fg_color)
-
-        style = ttk.Style()
-        style.configure("TCheckbutton", foreground=self.fg_color)
-
-        style = ttk.Style()
-        style.configure("Destination.TButton", foreground=self.fg_color)
 
         style = ttk.Style()
         style.configure("Download.TButton",
