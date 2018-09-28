@@ -34,7 +34,7 @@ class App(ttk.Frame):
     def __init__(self, master=None, **kw):
         super().__init__(master)
         self.master = master
-        self.master.title("Diarrhea")
+        self.master.title("tubee")
 
         # Create variables.
         self.link = tk.StringVar()
