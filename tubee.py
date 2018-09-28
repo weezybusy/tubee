@@ -44,9 +44,9 @@ class App(ttk.Frame):
         self.destination = tk.StringVar()
 
         # Create colors.
-        self.fg_color = "#475263"
+        self.fg_color = "#000000"
         self.bg_color = "#ffffff"
-        self.select_fg_color = "#475263"
+        self.select_fg_color = "#43474f"
         self.select_bg_color = "#a4ced4"
         self.entry_inactive_fg_color = "#6b7d81"
         self.download_button_inactive_fg_color = "#ffffff"
@@ -56,7 +56,6 @@ class App(ttk.Frame):
         self.error_fg_color = "#cd3333"
 
         # Create styles.
-
         style = ttk.Style()
         style.configure("TEntry", selectforeground=self.select_fg_color,
                 selectbackground=self.select_bg_color)
