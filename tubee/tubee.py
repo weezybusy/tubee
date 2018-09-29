@@ -24,10 +24,10 @@ class AutoScrollbar(ttk.Scrollbar):
         ttk.Scrollbar.set(self, lo, hi)
 
     def pack(self, **kw):
-        raise TclError("cannot use pack with this widget")
+        raise tk.TclError("cannot use pack with this widget")
 
     def place(self, **kw):
-        raise TclError("cannot use place with this widget")
+        raise tk.TclError("cannot use place with this widget")
 
 
 class App(ttk.Frame):
@@ -238,5 +238,5 @@ def main():
     youtube_downloader = App(root)
     root.mainloop()
 
-if __name__ == '__name__':
+if __name__ == "__main__":
     main()
