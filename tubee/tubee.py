@@ -200,11 +200,12 @@ class App(ttk.Frame):
             self.link_entry.config(foreground=self.fg_color)
 
     def _on_destination_button_click(self):
-        self.destination.set(tk.filedialog.askdirectory(
-                initialdir="~/Downloads",
-                title="Select destination directory"
+        self.destination.set(
+                tk.filedialog.askdirectory(
+                    initialdir="~/Downloads",
+                    title="Select destination directory"
+                    )
                 )
-            )
 
     def _on_new_type_selection(self, event):
         self.type_combobox.selection_clear()
