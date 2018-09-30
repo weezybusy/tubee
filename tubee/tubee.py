@@ -107,8 +107,11 @@ class App(ttk.Frame):
         self.link_entry.configure(xscrollcommand=self.entry_scrollbar.set)
 
     def create_entry_scrollbar(self):
-        self.entry_scrollbar = AutoScrollbar(self.entry_frame,
-                orient=tk.HORIZONTAL, command=self.link_entry.xview)
+        self.entry_scrollbar = AutoScrollbar(
+                self.entry_frame,
+                orient=tk.HORIZONTAL,
+                command=self.link_entry.xview
+                )
         self.entry_scrollbar.grid(row=1, column=0, columnspan=4,
                 sticky=tk.W+tk.E)
 
