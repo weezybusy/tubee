@@ -23,10 +23,6 @@ class MyLogger(object):
 
 class AutoScrollbar(ttk.Scrollbar):
 
-    """ A scrollbar that hides itself if it's not needed.
-    Only works if you use the grid geometry manager.
-    """
-
     def set(self, lo, hi):
         if float(lo) <= 0.0 and float(hi) >= 1.0:
             self.grid_remove()
@@ -42,6 +38,7 @@ class AutoScrollbar(ttk.Scrollbar):
 
 
 class App(ttk.Frame):
+
     def __init__(self, master=None, **kw):
         super().__init__(master)
         self.master = master
