@@ -62,7 +62,7 @@ class App(ttk.Frame):
         self.select_fg_color = "#43474f"
         self.select_bg_color = "#a4ced4"
         self.entry_inactive_fg_color = "#6b7d81"
-        self.entry_download_complete = "#6b7d81"
+        self.entry_download_complete_color = "#6b7d81"
         self.download_button_inactive_fg_color = "#ffffff"
         self.download_button_inactive_bg_color = "#43474f"
         self.download_button_active_fg_color = "#ffffff"
@@ -219,7 +219,7 @@ class App(ttk.Frame):
 
     def my_hook(self, data):
         if data["status"] == "finished":
-            self.link_entry.config(foreground=self.entry_download_complete)
+            self.link_entry.config(foreground=self.entry_download_complete_color)
             self.link.set("DOWNLOADING COMPLETE")
 
     def _on_download_button_click(self):
