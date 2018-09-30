@@ -10,6 +10,17 @@ import tkinter as tk
 import youtube_dl
 
 
+class MyLogger(object):
+    def debug(self, msg):
+        pass
+
+    def warning(self, msg):
+        pass
+
+    def error(self, msg):
+        print(msg)
+
+
 class AutoScrollbar(ttk.Scrollbar):
 
     """ A scrollbar that hides itself if it's not needed.
@@ -49,6 +60,7 @@ class App(ttk.Frame):
         self.select_fg_color = "#43474f"
         self.select_bg_color = "#a4ced4"
         self.entry_inactive_fg_color = "#6b7d81"
+        self.entry_download_complete = "#6b7d81"
         self.download_button_inactive_fg_color = "#ffffff"
         self.download_button_inactive_bg_color = "#43474f"
         self.download_button_active_fg_color = "#ffffff"
@@ -169,7 +181,7 @@ class App(ttk.Frame):
                 style="Download.TButton",
                 command=self._on_download_button_click,
                 )
-        self.download_button.grid(padx=5, pady=10, columnspan=4)
+        self.download_button.grid(row=3, pady=10, columnspan=4)
         self.download_button_is_clicked = False
 
     def _on_link_entry_focus(self, event):
@@ -196,6 +208,11 @@ class App(ttk.Frame):
     def _on_new_resolution_selection(self, event):
         self.resolution_combobox.selection_clear()
 
+    def my_hook(self, data):
+        if data["status"] == "finished":
+            self.link_entry.config(foreground=self.entry_download_complete)
+            self.link.set("DOWNLOADING COMPLETE")
+
     def _on_download_button_click(self):
         if self.download_button_is_clicked == True:
             return
@@ -204,7 +221,8 @@ class App(ttk.Frame):
         name = "%(title)s.%(ext)s"
         ydl_opts = {
                 "noplaylist": True,
-                "quiet": True
+                "quiet": True,
+                "progress_hooks": [self.my_hook]
                 }
         if self.type.get() == "audio":
             ydl_opts["format"] = "bestaudio/best"
@@ -225,15 +243,12 @@ class App(ttk.Frame):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             try:
                 ydl.download([self.link.get()])
-            except Exception:
+            except Exception as e:
                 self.link_entry.configure(foreground=self.error_fg_color)
                 self.link.set("DOWNLOAD ERROR")
+                print(e)
             else:
-                self._on_download_complete()
-
-    def _on_download_complete(self):
-        self.download_button_is_clicked = False
-        self.link.set("DOWNLOAD COMPLETE")
+                self.download_button_is_clicked = False
 
 
 def main():
