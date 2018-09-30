@@ -46,15 +46,19 @@ class App(ttk.Frame):
         super().__init__(master)
         self.master = master
         self.master.title("tubee")
+        self.create_variables()
+        self.create_colors()
+        self.create_styles()
+        self.create_widgets()
 
-        # Create variables.
+    def create_variables(self):
         self.link = tk.StringVar()
         self.type = tk.StringVar()
         self.resolution = tk.StringVar()
         self.playlist = tk.IntVar()
         self.destination = tk.StringVar()
 
-        # Create colors.
+    def create_colors(self):
         self.fg_color = "#000000"
         self.bg_color = "#ffffff"
         self.select_fg_color = "#43474f"
@@ -67,22 +71,20 @@ class App(ttk.Frame):
         self.download_button_active_bg_color = "#6b7d81"
         self.error_fg_color = "#cd3333"
 
-        # Create styles.
-        style = ttk.Style()
-        style.configure("TEntry", selectforeground=self.select_fg_color,
+    def create_styles(self):
+        self.style = ttk.Style()
+        self.style.configure("TEntry", selectforeground=self.select_fg_color,
                 selectbackground=self.select_bg_color)
 
-        style = ttk.Style()
-        style.map("TCombobox", fieldbackground=[("readonly", self.bg_color)])
+        self.style.map("TCombobox", fieldbackground=[("readonly", self.bg_color)])
         self.master.option_add("*TCombobox*Listbox.selectBackground",
                 self.select_bg_color)
 
-        style = ttk.Style()
-        style.configure("Download.TButton",
+        self.style.configure("Download.TButton",
                 background=self.download_button_inactive_bg_color,
                 foreground=self.download_button_active_fg_color,
                 font=("TkDefaultFont", 10, "bold"))
-        style.map("Download.TButton",
+        self.style.map("Download.TButton",
                 background=[
                     ("disabled", self.download_button_active_bg_color),
                     ("pressed", self.download_button_active_bg_color),
@@ -91,7 +93,7 @@ class App(ttk.Frame):
                 relief=[ ("pressed", "!disabled", "sunken") ]
                 )
 
-        # Create widgets.
+    def create_widgets(self):
         self.create_entry_frame()
         self.create_type_combobox()
         self.create_resolution_combobox()
@@ -255,6 +257,7 @@ def main():
     root = tk.Tk()
     youtube_downloader = App(root)
     root.mainloop()
+
 
 if __name__ == "__main__":
     main()
