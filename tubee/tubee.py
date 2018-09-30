@@ -71,24 +71,32 @@ class App(ttk.Frame):
 
     def create_styles(self):
         self.style = ttk.Style()
-        self.style.configure("TEntry", selectforeground=self.select_fg_color,
-                selectbackground=self.select_bg_color)
-
-        self.style.map("TCombobox", fieldbackground=[("readonly", self.bg_color)])
-        self.master.option_add("*TCombobox*Listbox.selectBackground",
-                self.select_bg_color)
-
-        self.style.configure("Download.TButton",
+        self.style.configure(
+                "TEntry",
+                selectforeground=self.select_fg_color,
+                selectbackground=self.select_bg_color
+                )
+        self.style.map(
+                "TCombobox",
+                fieldbackground=[("readonly", self.bg_color)]
+                )
+        self.master.option_add(
+                "*TCombobox*Listbox.selectBackground", self.select_bg_color
+                )
+        self.style.configure(
+                "Download.TButton",
                 background=self.download_button_inactive_bg_color,
                 foreground=self.download_button_active_fg_color,
-                font=("TkDefaultFont", 10, "bold"))
-        self.style.map("Download.TButton",
+                font=("TkDefaultFont", 10, "bold")
+                )
+        self.style.map(
+                "Download.TButton",
                 background=[
                     ("disabled", self.download_button_active_bg_color),
                     ("pressed", self.download_button_active_bg_color),
                     ("active", self.download_button_active_bg_color)
                     ],
-                relief=[ ("pressed", "!disabled", "sunken") ]
+                relief=[("pressed", "!disabled", "sunken")]
                 )
 
     def create_widgets(self):
@@ -243,10 +251,9 @@ class App(ttk.Frame):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             try:
                 ydl.download([self.link.get()])
-            except Exception as e:
+            except Exception:
                 self.link_entry.configure(foreground=self.error_fg_color)
                 self.link.set("DOWNLOAD ERROR")
-                print(e)
             else:
                 self.download_button_is_clicked = False
 
