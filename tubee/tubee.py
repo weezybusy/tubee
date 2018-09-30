@@ -11,6 +11,7 @@ import youtube_dl
 
 
 class MyLogger(object):
+
     def debug(self, msg):
         pass
 
