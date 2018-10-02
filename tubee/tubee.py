@@ -63,6 +63,7 @@ class App:
 
     def create_styles(self):
         self.style = ttk.Style()
+        self.style.configure("TFrame", relief="flat")
         self.style.configure("TEntry", foreground=self.color3,
                 selectforeground=self.color1, selectbackground=self.color2)
         self.style.configure("TCombobox", foreground=self.color3)
@@ -97,11 +98,11 @@ class App:
         self.create_status_label()
 
     def create_main_frame(self):
-        self.main_frame = ttk.Frame(self.master, relief="flat")
+        self.main_frame = ttk.Frame(self.master)
         self.main_frame.grid(row=0, column=0, rowspan=3, padx=5, pady=5)
 
     def create_entry_frame(self):
-        self.entry_frame = ttk.Frame(self.main_frame, relief="flat")
+        self.entry_frame = ttk.Frame(self.main_frame)
         self.entry_frame.grid(row=0, column=0, sticky=tk.W+tk.E)
         self.create_link_entry()
 
@@ -128,7 +129,7 @@ class App:
                 sticky=tk.W+tk.E)
 
     def create_options_frame(self):
-        self.options_frame = ttk.Frame(self.main_frame, relief="flat")
+        self.options_frame = ttk.Frame(self.main_frame)
         self.options_frame.grid(row=2, column=0, pady=5, sticky=tk.W+tk.E)
 
     def create_type_combobox(self):
@@ -150,7 +151,7 @@ class App:
                 values="360 480 720 1080",
                 width=5,
                 state="readonly",
-                textvariable=self.resolution,
+                textvariable=self.resolution
                 )
         self.resolution_combobox.bind("<<ComboboxSelected>>",
                 self.on_resolution_selection)
@@ -185,7 +186,7 @@ class App:
                 text="Download",
                 width=10,
                 style="Download.TButton",
-                command=self.on_download_button_click,
+                command=self.on_download_button_click
                 )
         self.download_button.grid(row=2, column=4, padx=5, sticky=tk.W+tk.E)
         self.download_button_is_clicked = False
