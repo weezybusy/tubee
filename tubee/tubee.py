@@ -32,10 +32,10 @@ class AutoScrollbar(ttk.Scrollbar):
         ttk.Scrollbar.set(self, lo, hi)
 
     def pack(self, **kw):
-        raise tk.TclError(u"cannot use pack with this widget")
+        raise tk.TclError("cannot use pack with this widget")
 
     def place(self, **kw):
-        raise tk.TclError(u"cannot use place with this widget")
+        raise tk.TclError("cannot use place with this widget")
 
 
 class App:
@@ -114,7 +114,7 @@ class App:
                 textvariable=self.link,
                 )
         self.link_entry.bind("<FocusIn>", self.on_link_entry_focus)
-        self.link.set(u"Put your link here ...")
+        self.link.set("Put your link here ...")
         self.link_entry.grid(row=0, column=0, sticky=tk.W+tk.E)
         self.create_entry_scrollbar()
         self.link_entry.configure(xscrollcommand=self.entry_scrollbar.set)
@@ -198,7 +198,7 @@ class App:
                 textvariable=self.status,
                 wrap=400
                 )
-        self.status.set(u"Status is shown here")
+        self.status.set("Status is shown here")
         self.status_label.grid(row=3, column=0, columnspan=5, sticky=tk.W)
 
     def on_link_entry_focus(self, event):
@@ -212,7 +212,7 @@ class App:
         self.destination.set(
                 tk.filedialog.askdirectory(
                     initialdir="~/Downloads",
-                    title=u"Select destination directory"
+                    title="Select destination directory"
                     )
                 )
 
@@ -231,12 +231,12 @@ class App:
 
     def my_hook(self, d):
         if d["status"] == "finished":
-            self.status.set(u"Downloading complete")
+            self.status.set("Downloading complete")
             self.status_label.grid()
 
     def on_download_button_click(self):
-        if self.link.get() == "" or self.link.get() == u"Put your link here ...":
-            self.status.set(u"Please, insert the link")
+        if self.link.get() == "" or self.link.get() == "Put your link here ...":
+            self.status.set("Please, insert the link")
             self.status_label.grid()
             return
 
@@ -271,7 +271,7 @@ class App:
             try:
                 ydl.download([self.link.get()])
             except Exception:
-                self.status.set(u"Download error")
+                self.status.set("Download error")
                 self.status_label.grid()
 
         self.download_button_is_clicked = False
