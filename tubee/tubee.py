@@ -64,7 +64,7 @@ class App:
     def create_styles(self):
         self.style = ttk.Style()
         self.style.configure("TEntry", foreground=self.color3,
-                selectforeground=self.color3, selectbackground=self.color1)
+                selectforeground=self.color1, selectbackground=self.color2)
         self.style.configure("TCombobox", foreground=self.color3)
         self.style.map("TCombobox", fieldbackground=[("readonly", self.color1)])
         self.master.option_add("*TCombobox*Listbox.selectBackground", self.color2)
@@ -86,7 +86,9 @@ class App:
         self.style.configure("Status.TLabel", foreground=self.color3)
 
     def create_widgets(self):
+        self.create_main_frame()
         self.create_entry_frame()
+        self.create_options_frame()
         self.create_type_combobox()
         self.create_resolution_combobox()
         self.create_playlist_checkbutton()
@@ -94,10 +96,13 @@ class App:
         self.create_download_button()
         self.create_status_label()
 
+    def create_main_frame(self):
+        self.main_frame = ttk.Frame(self.master, relief="flat")
+        self.main_frame.grid(row=0, column=0, rowspan=3, padx=5, pady=5)
+
     def create_entry_frame(self):
-        self.entry_frame = ttk.Frame(self.master)
-        self.entry_frame.grid(row=0, column=0, padx=5, pady=5, columnspan=5,
-                sticky=tk.W+tk.E)
+        self.entry_frame = ttk.Frame(self.main_frame, relief="flat")
+        self.entry_frame.grid(row=0, column=0, sticky=tk.W+tk.E)
         self.create_link_entry()
 
     def create_link_entry(self):
@@ -109,7 +114,7 @@ class App:
                 )
         self.link_entry.bind("<FocusIn>", self.on_link_entry_focus)
         self.link.set("Put your link here ...")
-        self.link_entry.grid(row=0, column=0, columnspan=5, sticky=tk.W+tk.E)
+        self.link_entry.grid(row=0, column=0, sticky=tk.W+tk.E)
         self.create_entry_scrollbar()
         self.link_entry.configure(xscrollcommand=self.entry_scrollbar.set)
 
@@ -122,9 +127,13 @@ class App:
         self.entry_scrollbar.grid(row=1, column=0, columnspan=5,
                 sticky=tk.W+tk.E)
 
+    def create_options_frame(self):
+        self.options_frame = ttk.Frame(self.main_frame, relief="flat")
+        self.options_frame.grid(row=2, column=0, pady=5, sticky=tk.W+tk.E)
+
     def create_type_combobox(self):
         self.type_combobox = ttk.Combobox(
-                self.master,
+                self.options_frame,
                 values="audio video",
                 state="readonly",
                 width=5,
@@ -133,11 +142,11 @@ class App:
         self.type_combobox.bind("<<ComboboxSelected>>",
                 self.on_type_selection)
         self.type.set("video")
-        self.type_combobox.grid(row=3, column=0)
+        self.type_combobox.grid(row=2, column=0, padx=5, sticky=tk.W+tk.E)
 
     def create_resolution_combobox(self):
         self.resolution_combobox = ttk.Combobox(
-                self.master,
+                self.options_frame,
                 values="360 480 720 1080",
                 width=5,
                 state="readonly",
@@ -146,21 +155,21 @@ class App:
         self.resolution_combobox.bind("<<ComboboxSelected>>",
                 self.on_resolution_selection)
         self.resolution.set("720")
-        self.resolution_combobox.grid(row=3, column=1)
+        self.resolution_combobox.grid(row=2, column=1, sticky=tk.W+tk.E)
 
     def create_playlist_checkbutton(self):
         self.playlist_checkbutton = ttk.Checkbutton(
-                self.master,
+                self.options_frame,
                 text="Playlist",
                 variable=self.playlist,
                 takefocus=False
                 )
         self.playlist.set(0)
-        self.playlist_checkbutton.grid(row=3, column=2)
+        self.playlist_checkbutton.grid(row=2, column=2, padx=5, sticky=tk.W+tk.E)
 
     def create_destination_button(self):
         self.destination_button = ttk.Button(
-                self.master,
+                self.options_frame,
                 text="Destination",
                 width=10,
                 style="Destination.TButton",
@@ -168,35 +177,35 @@ class App:
                 command=self.on_destination_button_click
                 )
         self.destination.set("~/Downloads")
-        self.destination_button.grid(row=3, column=3)
+        self.destination_button.grid(row=2, column=3, sticky=tk.W+tk.E)
 
     def create_download_button(self):
         self.download_button = ttk.Button(
-                self.master,
+                self.options_frame,
                 text="Download",
                 width=10,
                 style="Download.TButton",
-                takefocus=False,
                 command=self.on_download_button_click,
                 )
-        self.download_button.grid(row=3, column=4)
+        self.download_button.grid(row=2, column=4, padx=5, sticky=tk.W+tk.E)
         self.download_button_is_clicked = False
 
     def create_status_label(self):
         self.status_label = ttk.Label(
-                self.master,
+                self.main_frame,
                 textvariable=self.status,
+                wrap=400,
                 style="Status.TLabel"
                 )
         self.status.set("Status is shown here")
-        self.status_label.grid(row=5, column=0, padx=5, pady=5, columnspan=5,
-                sticky=tk.W)
+        self.status_label.grid(row=3, column=0, columnspan=5, sticky=tk.W)
 
     def on_link_entry_focus(self, event):
         if str(self.link_entry.cget("foreground")) == self.color2:
             self.link.set("")
             self.link_entry.config(foreground=self.color3)
         self.status.set("")
+        self.hide_status()
 
     def on_destination_button_click(self):
         self.destination.set(
@@ -216,13 +225,18 @@ class App:
     def on_resolution_selection(self, event):
         self.resolution_combobox.selection_clear()
 
-    def my_hook(self, data):
-        if data["status"] == "finished":
+    def hide_status(self):
+        self.status_label.grid_remove()
+
+    def my_hook(self, d):
+        if d["status"] == "finished":
             self.status.set("Downloading complete")
+            self.status_label.grid()
 
     def on_download_button_click(self):
         if self.link.get() == "" or self.link.get() == "Put your link here ...":
             self.status.set("Please, insert the link")
+            self.status_label.grid()
             return
 
         if self.download_button_is_clicked == True:
@@ -257,6 +271,7 @@ class App:
                 ydl.download([self.link.get()])
             except Exception:
                 self.status.set("Download error")
+                self.status_label.grid()
 
         self.download_button_is_clicked = False
 
