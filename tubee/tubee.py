@@ -84,7 +84,7 @@ class App:
                     ],
                 relief=[("pressed", "!disabled", "sunken")]
                 )
-        self.style.configure("Status.TLabel", foreground=self.color3)
+        self.style.configure("TLabel", foreground=self.color3)
 
     def create_widgets(self):
         self.create_main_frame()
@@ -140,8 +140,7 @@ class App:
                 width=5,
                 textvariable=self.type
                 )
-        self.type_combobox.bind("<<ComboboxSelected>>",
-                self.on_type_selection)
+        self.type_combobox.bind("<<ComboboxSelected>>", self.on_type_selection)
         self.type.set("video")
         self.type_combobox.grid(row=2, column=0, padx=5, sticky=tk.W+tk.E)
 
@@ -162,6 +161,8 @@ class App:
         self.playlist_checkbutton = ttk.Checkbutton(
                 self.options_frame,
                 text="Playlist",
+                onvalue=True,
+                offvalue=False,
                 variable=self.playlist,
                 takefocus=False
                 )
@@ -195,8 +196,7 @@ class App:
         self.status_label = ttk.Label(
                 self.main_frame,
                 textvariable=self.status,
-                wrap=400,
-                style="Status.TLabel"
+                wrap=400
                 )
         self.status.set("Status is shown here")
         self.status_label.grid(row=3, column=0, columnspan=5, sticky=tk.W)
@@ -206,7 +206,7 @@ class App:
             self.link.set("")
             self.link_entry.config(foreground=self.color3)
         self.status.set("")
-        self.hide_status()
+        self.hide_status_label()
 
     def on_destination_button_click(self):
         self.destination.set(
@@ -226,7 +226,7 @@ class App:
     def on_resolution_selection(self, event):
         self.resolution_combobox.selection_clear()
 
-    def hide_status(self):
+    def hide_status_label(self):
         self.status_label.grid_remove()
 
     def my_hook(self, d):
@@ -261,7 +261,7 @@ class App:
         else:
             ydl_opts["format"] = f"(mp4)[height<={self.resolution.get()}]"
 
-        if self.playlist.get() == 1:
+        if self.playlist.get() == True:
             ydl_opts["noplaylist"] = False
             name = "%(playlist)s/%(playlist_index)s - %(title)s.%(ext)s"
         path = Path(self.destination.get()).expanduser()
