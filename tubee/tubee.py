@@ -99,7 +99,8 @@ class App:
 
     def create_main_frame(self):
         self.main_frame = ttk.Frame(self.master)
-        self.main_frame.grid(row=0, column=0, rowspan=3, columnspan=5, padx=5, pady=5)
+        self.main_frame.grid(row=0, column=0, rowspan=3, columnspan=5, padx=5,
+                pady=5)
 
     def create_entry_frame(self):
         self.entry_frame = ttk.Frame(self.main_frame)
@@ -167,7 +168,8 @@ class App:
                 takefocus=False
                 )
         self.playlist.set(0)
-        self.playlist_checkbutton.grid(row=2, column=2, padx=5, sticky=tk.W+tk.E)
+        self.playlist_checkbutton.grid(row=2, column=2, padx=5,
+                sticky=tk.W+tk.E)
 
     def create_destination_button(self):
         self.destination_button = ttk.Button(
@@ -206,7 +208,7 @@ class App:
             self.link.set("")
             self.link_entry.config(foreground=self.color3)
         self.status.set("")
-        self.hide_status_label()
+        self.status_label.grid_remove()
 
     def on_destination_button_click(self):
         self.destination.set(
@@ -225,9 +227,6 @@ class App:
 
     def on_resolution_selection(self, event):
         self.resolution_combobox.selection_clear()
-
-    def hide_status_label(self):
-        self.status_label.grid_remove()
 
     def my_hook(self, d):
         if d["status"] == "finished":
@@ -270,7 +269,8 @@ class App:
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             try:
                 ydl.download([self.link.get()])
-            except Exception:
+            except Exception as e:
+                print(e)
                 self.status.set("Download error")
                 self.status_label.grid()
 
