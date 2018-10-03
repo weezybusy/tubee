@@ -99,11 +99,11 @@ class App:
 
     def create_main_frame(self):
         self.main_frame = ttk.Frame(self.master)
-        self.main_frame.grid(row=0, column=0, rowspan=3, padx=5, pady=5)
+        self.main_frame.grid(row=0, column=0, rowspan=3, columnspan=5, padx=5, pady=5)
 
     def create_entry_frame(self):
         self.entry_frame = ttk.Frame(self.main_frame)
-        self.entry_frame.grid(row=0, column=0, sticky=tk.W+tk.E)
+        self.entry_frame.grid(row=0, column=0, columnspan=5, sticky=tk.W+tk.E)
         self.create_link_entry()
 
     def create_link_entry(self):
@@ -130,7 +130,7 @@ class App:
 
     def create_options_frame(self):
         self.options_frame = ttk.Frame(self.main_frame)
-        self.options_frame.grid(row=2, column=0, pady=5, sticky=tk.W+tk.E)
+        self.options_frame.grid(row=2, column=0, pady=5, columnspan=4)
 
     def create_type_combobox(self):
         self.type_combobox = ttk.Combobox(
@@ -183,7 +183,7 @@ class App:
 
     def create_download_button(self):
         self.download_button = ttk.Button(
-                self.options_frame,
+                self.main_frame,
                 text="Download",
                 width=10,
                 style="Download.TButton",
