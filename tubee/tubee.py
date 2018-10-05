@@ -43,6 +43,7 @@ class App:
     def __init__(self, master=None):
         self.master = master
         self.master.title("tubee")
+        self.master.resizable(False, False)
         self.create_variables()
         self.create_colors()
         self.create_styles()
@@ -57,19 +58,19 @@ class App:
         self.destination = tk.StringVar()
 
     def create_colors(self):
-        self.color1 = "#ffffff"
-        self.color2 = "#6b7d81"
-        self.color3 = "#43474f"
+        self.color1 = "white"
+        self.color2 = "grey"
+        self.color3 = "black"
 
     def create_styles(self):
         self.style = ttk.Style()
         self.style.configure("TFrame", relief="flat")
         self.style.configure("TEntry", foreground=self.color3,
-                selectforeground=self.color1, selectbackground=self.color2)
+                selectforeground=self.color3, selectbackground=self.color2)
         self.style.configure("TCombobox", foreground=self.color3)
         self.style.map("TCombobox", fieldbackground=[("readonly", self.color1)])
         self.master.option_add("*TCombobox*Listbox.selectBackground", self.color2)
-        self.master.option_add("*TCombobox*Listbox.selectForeground", self.color1)
+        self.master.option_add("*TCombobox*Listbox.selectForeground", self.color3)
         self.master.option_add("*TCombobox*Listbox.foreground", self.color3)
         self.style.configure("TCheckbutton", foreground=self.color3)
         self.style.configure("TButton", foreground=self.color3)
@@ -235,7 +236,7 @@ class App:
 
     def on_download_button_click(self):
         if self.link.get() == "" or self.link.get() == "Put your link here ...":
-            self.status.set("Please, insert the link")
+            self.status.set("You must provide a link")
             self.status_label.grid()
             return
 
@@ -269,8 +270,7 @@ class App:
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             try:
                 ydl.download([self.link.get()])
-            except Exception as e:
-                print(e)
+            except Exception:
                 self.status.set("Download error")
                 self.status_label.grid()
 
